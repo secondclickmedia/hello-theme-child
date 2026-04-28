@@ -34,3 +34,22 @@ function hello_elementor_child_scripts_styles() {
 
 }
 add_action( 'wp_enqueue_scripts', 'hello_elementor_child_scripts_styles', 20 );
+
+// Safely include all PHP files in the 'inc' folder from the child theme
+function hello_elementor_child_include_files() {
+    $include_path = get_stylesheet_directory() . '/inc/'; // Define the path to your folder
+
+    // Use glob() to find all PHP files in the directory
+    $files = glob( $include_path . '*.php' );
+
+    // Loop through each file and require it
+    if ( $files ) {
+        foreach ( $files as $file ) {
+            // Use require_once to prevent fatal errors if a file is somehow included twice
+            require_once( $file );
+        }
+    }
+}
+
+// Hook this function early in the WordPress loading process
+add_action( 'after_setup_theme', 'hello_elementor_child_include_files' );
